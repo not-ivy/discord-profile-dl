@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import DiscordUser from '../../types/discord';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { query: { idList, captcha } } = req;
+  const { idList, captcha } = JSON.parse(req.body);
   if (!process.env.RECAPTCHA_SECRET) return res.status(500).json({ error: 'reCAPTCHA not setup correctly' });
   if (!captcha) return res.status(401).json({ error: 'No reCAPTCHA token provided' });
 
@@ -18,9 +19,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 async function lookupBulk(idList: string[]) {
+  const uniqueList = idList.filter((id, index) => idList.indexOf(id) === index);
   const result = [];
-  for (const id of idList) {
-    const user = await lookUpDiscord(id)
+  let user: DiscordUser;
+  for (const id of uniqueList) {
+    try {
+      user = await lookUpDiscord(id);
+    } catch (e) {
+      result.push({ id: id, success: false })
+      continue
+    }
     result.push(user)
   }
   return result;
