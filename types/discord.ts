@@ -1,5 +1,6 @@
 export default interface DiscordUser {
   success: boolean,
+  error: string | undefined,
   id: bigint,
   username: string,
   discriminator: string,

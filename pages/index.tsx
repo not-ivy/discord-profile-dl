@@ -6,6 +6,7 @@ import type DiscordUser from "../types/discord";
 
 export default function Index() {
   const [lookupResult, setLookupResult] = useState<DiscordUser[] | undefined>(undefined);
+  const [failedRequests, setFailedRequests] = useState<{ id: bigint, reason: string }[] | undefined>(undefined);
   const [formError, setFormError] = useState(false);
   const { executeRecaptcha } = useGoogleReCaptcha();
   const inputRef = useRef(null);
@@ -30,7 +31,10 @@ export default function Index() {
   }
 
   useEffect(() => {
-    console.log(lookupResult);
+    let tempfail: { id: bigint, reason: string }[] = [];
+    if (!lookupResult) return;
+    lookupResult.filter((user) => !user.success).forEach((user) => tempfail.push({ id: user.id, reason: user.error }))
+    setFailedRequests(tempfail);
   }, [lookupResult])
 
   const inputCallback = () => {
@@ -40,9 +44,14 @@ export default function Index() {
   return (
     <>
       <Head>
-        <title>Download discord user's profile</title>
+        <title>Download discord user&apos;s profile</title>
       </Head>
       <div className="max-w-screen-md mx-auto p-4 lg:p-8 bg-white dark:bg-black text-black dark:text-white">
+      <div className={`my-2 p-2 outline-dashed outline-red-600 flex justify-center items-center ${lookupResult ? 'block' : 'hidden'}`}>
+          {failedRequests ? failedRequests.map((failed) => (
+            <span key={`error-${failed.id}`}>Lookup ID {failed.id.toString()} with reason {failed.reason}</span>
+          )) : <></>}
+        </div>
         <h2 className="my-4 text-3xl font-bold italic">Input ID here:</h2>
         <textarea onInput={inputCallback} className={`my-2 p-2 font-medium outline-dashed w-full dark:bg-black text-black dark:text-white ${formError ? 'dark:outline-red-500 outline-red-500 text-red-500 dark:text-red-500' : ''} dark:outline-white outline-black transition-all`} ref={inputRef} placeholder="List of Discord IDs seperated by space" /> <br />
         <button className="my-2 p-2 transition-colors dark:outline-white outline-black dark:hover:bg-white dark:hover:text-black dark:hover:border-black cursor-pointer outline-dashed font-bold" onClick={sendRequest}>Submit</button>
