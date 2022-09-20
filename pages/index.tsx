@@ -18,6 +18,7 @@ export default function Index() {
 
   useEffect(() => {
     console.log(`lookupRes: ${JSON.stringify(lookupResult)}`);
+    console.log(process.env.RECAPTCHA_SITE_KEY)
   }, [lookupResult])
 
   useEffect(() => {
