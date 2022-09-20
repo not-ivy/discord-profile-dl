@@ -31,13 +31,25 @@ export default function Index() {
   return (
     <>
       <Head>
-        <title>Lookup multiple discord users</title>
+        <title>Download discord user's profile</title>
       </Head>
       <div className="max-w-screen-md mx-auto p-4 lg:p-8 bg-white dark:bg-black text-black dark:text-white">
-        <h2 className="mb-4 text-3xl font-bold italic">Input ID here:</h2>
-        <textarea onInput={inputCallback} className={`m-2 p-2 font-medium outline-dashed w-full dark:bg-black text-black dark:text-white ${formError ? 'dark:outline-red-500 outline-red-500 text-red-500 dark:text-red-500' : ''} dark:outline-white outline-black transition-all`} ref={inputRef} placeholder="List of Discord IDs seperated by space" /> <br />
-        <button className="m-2 p-2 transition-colors dark:outline-white outline-black dark:hover:bg-white dark:hover:text-black dark:hover:border-black cursor-pointer outline-dashed font-bold" onClick={sendRequest}>Submit</button>
-        <div>{JSON.stringify(lookupResult)}</div>
+        <h2 className="my-4 text-3xl font-bold italic">Input ID here:</h2>
+        <textarea onInput={inputCallback} className={`my-2 p-2 font-medium outline-dashed w-full dark:bg-black text-black dark:text-white ${formError ? 'dark:outline-red-500 outline-red-500 text-red-500 dark:text-red-500' : ''} dark:outline-white outline-black transition-all`} ref={inputRef} placeholder="List of Discord IDs seperated by space" /> <br />
+        <button className="my-2 p-2 transition-colors dark:outline-white outline-black dark:hover:bg-white dark:hover:text-black dark:hover:border-black cursor-pointer outline-dashed font-bold" onClick={sendRequest}>Submit</button>
+        {!lookupResult ? <></> : (
+          <div className="grid grid-cols-5 gap-x-4 p-4 grid-rows-3 w-full h-40 my-4 outline-dashed dark:outline-white outline-black">
+            <div className="col-span-1 row-span-3 relative">
+              <Image className="rounded-full" alt={lookupResult.username} src={`https://cdn.discordapp.com/avatars/${lookupResult.id}/${lookupResult.avatar}.webp?size=1024`} layout="fill" objectFit="contain" />
+            </div>
+            <div className="flex flex-col justify-center items-center col-span-4 row-span-3">
+              <div className="relative w-full h-full">
+                <Image src={`https://cdn.discordapp.com/banners/${lookupResult.id}/${lookupResult.banner}.webp?size=1024`} layout="fill" objectFit="contain" />
+              </div>
+              <span>{lookupResult.username}#{lookupResult.discriminator}</span>
+            </div>
+          </div>
+        )}
       </div>
     </>
   )
