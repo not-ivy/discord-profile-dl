@@ -1,34 +1,36 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { query: { idList, captcha } } = req;
   if (!process.env.RECAPTCHA_SECRET) return res.status(500).json({ error: 'reCAPTCHA not setup correctly' });
   if (!captcha) return res.status(401).json({ error: 'No reCAPTCHA token provided' });
 
-  fetch('https://www.google.com/recaptcha/api/siteverify', {
+  const verifyCaptcha = await (await fetch('https://www.google.com/recaptcha/api/siteverify', {
     method: 'POST',
-    body: JSON.stringify({
-      secret: process.env.RECAPTCHA_SECRET,
-      response: captcha,
-    })
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (!data.success) return res.status(401).json({ error: 'Failed reCAPTCHA' });
-      if (!Array.isArray(idList)) return lookUpDiscord(idList);
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ secret: process.env.RECAPTCHA_SECRET, response: captcha.toString() }).toString()
+  })).json()
+  console.log(verifyCaptcha)
+  if (!verifyCaptcha.success) return res.status(401).json({ error: 'Failed reCAPTCHA' });
 
-      const result = [];
-      idList.forEach((id) => result.push(lookUpDiscord(id)));
-      return res.status(200).json(result)
-    }).catch((error) => res.status(500).json({ error }))
+  if (!Array.isArray(idList)) return res.status(200).json(await lookUpDiscord(idList));
+  return res.status(200).json(await lookupBulk(idList));
 }
 
+async function lookupBulk(idList: string[]) {
+  const result = [];
+  for (const id of idList) {
+    const user = await lookUpDiscord(id)
+    result.push(user)
+  }
+  return result;
+}
 
-function lookUpDiscord(id: string): any {
-  fetch(`https://discord.com/api/v9/users/${id}`, {
+async function lookUpDiscord(id: string) {
+  return (await fetch(`https://discord.com/api/v9/users/${id}`, {
     method: 'GET',
     headers: {
       'Authorization': `Bot ${process.env.BOT_TOKEN}`,
     }
-  }).then((res) => res.json()).then((data) => data)
+  })).json();
 }
