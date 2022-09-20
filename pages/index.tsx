@@ -11,7 +11,7 @@ export default function Index() {
     if (!executeRecaptcha) return;
     if (!inputRef) return;
     const token = await executeRecaptcha();
-    fetch(`${window.location.href}/requestBulk?${new URLSearchParams({ idList: inputRef.current.value.split(','), captcha: token }).toString()}`)
+    fetch(`${window.location.href}/api/requestBulk?${new URLSearchParams({ idList: inputRef.current.value.split(','), captcha: token }).toString()}`)
       .then((res) => res.json)
       .then((data) => setLookupResult(data))
   }, [executeRecaptcha])
