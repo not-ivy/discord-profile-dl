@@ -46,7 +46,7 @@ export default function Index() {
         <title>Download discord user&apos;s profile</title>
       </Head>
       <div className="max-w-screen-md mx-auto p-4 lg:p-8 bg-white dark:bg-black text-black dark:text-white">
-        <div className={`my-2 p-2 outline-dashed outline-red-600 flex justify-center items-center ${lookupResult ? 'block' : 'hidden'} text-red-600 font-medium`}>
+        <div className={`my-2 p-2 outline-dashed outline-red-600 flex justify-center items-center ${lookupResult ? 'block' : 'hidden'} text-red-600 font-medium italic`}>
           {failedRequests ? failedRequests.map((failed, index) => (
             <div key={`error-${index}`}>
               <span>Some requests failed with reason {failed.status.error}</span>
@@ -57,8 +57,8 @@ export default function Index() {
             </div>
           )) : <></>}
         </div>
-        <h2 className="my-4 text-3xl font-bold italic">Input ID here:</h2>
-        <textarea onInput={inputCallback} className={`my-2 p-2 font-medium outline-dashed w-full dark:bg-black text-black dark:text-white ${formError ? 'dark:outline-red-500 outline-red-500 text-red-500 dark:text-red-500' : ''} dark:outline-white outline-black transition-all`} ref={inputRef} placeholder="List of Discord IDs seperated by space" /> <br />
+        <h2 className="my-4 text-3xl font-bold italic">Input IDs here:</h2>
+        <textarea onInput={inputCallback} className={`my-2 p-2 font-medium outline-dashed w-full dark:bg-black text-black dark:text-white ${formError ? 'dark:outline-red-500 outline-red-500 text-red-500 dark:text-red-500' : ''} dark:outline-white outline-black transition-all`} ref={inputRef} placeholder="List of Discord IDs seperated by newline" /> <br />
         <button className="my-2 p-2 transition-colors dark:outline-white outline-black dark:hover:bg-white dark:hover:text-black dark:hover:border-black cursor-pointer outline-dashed font-bold" onClick={sendRequest}>Submit</button>
         {!lookupResult ? <></> : lookupResult.map((user) => (
           <div className={`${!user.status.success ? 'hidden' : 'grid'} grid-cols-5 gap-x-4 p-4 grid-rows-3 w-full h-40 my-4 outline-dashed dark:outline-white outline-black`} key={`user-${user.response.id}`}>
