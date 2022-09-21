@@ -72,8 +72,8 @@ export default function Index() {
       <Head>
         <title>Download discord user&apos;s profile</title>
       </Head>
-      <div className="max-w-screen-md mx-auto p-4 lg:p-8 bg-white dark:bg-black text-black dark:text-white">
-        <div className={`my-2 p-2 outline-dashed outline-red-600 flex justify-start items-center ${failedRequests ? 'block' : 'hidden'} dark:text-white text-black font-medium italic bg-red-800`}>
+      <div className="max-w-screen-md mx-auto p-4 lg:p-8 bg-white dark:bg-black text-black dark:text-white dark:outline-white outline-black">
+        <div className={`my-2 p-2 outline-dashed outline-red-600 flex justify-start items-center ${failedRequests ? 'block' : 'hidden'} dark:text-white text-black font-medium italic dark:bg-red-800 bg-red-400`}>
           {failedRequests ? failedRequests.map((failed, index) => (
             <div key={`error-${index}`}>
               <span>Some requests failed with reason {failed.status.error}</span>
@@ -86,11 +86,11 @@ export default function Index() {
         </div>
         <h2 className="my-4 text-3xl font-bold italic">Input IDs here:</h2>
         <textarea onInput={inputCallback} className={`my-2 p-2 font-medium outline-dashed w-full dark:bg-black text-black dark:text-white ${formError ? 'dark:outline-red-500 outline-red-500 text-red-500 dark:text-red-500' : ''} dark:outline-white outline-black transition-all`} ref={inputRef} placeholder="List of Discord IDs seperated by newline" /> <br />
-        <button className="mt-2 p-2 transition-colors dark:outline-white outline-black dark:hover:bg-white dark:hover:text-black dark:hover:border-black cursor-pointer outline-dashed font-bold" onClick={sendRequest}>Submit</button>
+        <button className="mt-2 p-2 transition-colors dark:hover:bg-white dark:hover:text-black hover:bg-black hover:text-white cursor-pointer outline-dashed font-bold" onClick={sendRequest}>Submit</button>
         {!lookupResult ? <></> : lookupResult.map((user) => (
           <>
-            <hr className="my-8 border-none outline-dashed dark:outline-white outline-black" />
-            <div className={`${!user.status.success ? 'hidden' : 'grid'} grid-cols-5 gap-x-4 p-4 grid-rows-3 w-full h-40 my-4 outline-dashed dark:outline-white outline-black`} key={`user-${user.response.id}`}>
+            <hr className="my-8 border-none outline-dashed" />
+            <div className={`${!user.status.success ? 'hidden' : 'grid'} grid-cols-5 gap-x-4 p-4 grid-rows-3 w-full h-40 my-4 outline-dashed`} key={`user-${user.response.id}`}>
               <div className="col-span-1 row-span-3 relative">
                 <Image className="rounded-full" alt={user.response.username} src={`https://cdn.discordapp.com/avatars/${user.response.id}/${user.response.avatar}.webp?size=1024`} layout="fill" objectFit="contain" />
               </div>
@@ -107,7 +107,7 @@ export default function Index() {
         ))}
         {(!lookupResult || lookupResult?.length === failedRequests?.length) ? <></> : (
           <>
-            <hr className="mt-8 border-none outline-dashed dark:outline-white outline-black" />
+            <hr className="mt-8 border-none outline-dashed" />
             <div className="flex flex-col">
               <div className="flex justify-around items-center my-8">
                 <span className="font-medium italics text-xl">Add names below?</span>
@@ -115,7 +115,7 @@ export default function Index() {
                   {nameChecked ? <CheckIcon className="dark:fill-white dark:stroke-white fill-black stroke-black" /> : <></>}
                 </div>
               </div>
-              <button className="p-2 transition-colors dark:outline-white outline-black dark:hover:bg-white dark:hover:text-black cursor-pointer outline-dashed font-bold" onClick={download}>Download</button>
+              <button className="p-2 transition-colors dark:hover:bg-white dark:hover:text-black hover:bg-black hover:text-white cursor-pointer outline-dashed font-bold" onClick={download}>Download</button>
             </div>
           </>
         )}
