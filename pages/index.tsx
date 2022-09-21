@@ -3,6 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react"
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import CheckIcon from "../components/CheckIcon";
 import type { DiscordResponse, DiscordUser, Status } from "../types/discord";
 
 export default function Index() {
@@ -10,6 +11,7 @@ export default function Index() {
   const [failedRequests, setFailedRequests] = useState<{ status: Status, response: DiscordResponse }[] | undefined>(undefined);
   const [formError, setFormError] = useState(false);
   const [imgList, setImgList] = useState<Map<string, Blob> | undefined>(undefined);
+  const [nameChecked, setNameChecked] = useState(false);
   const { executeRecaptcha } = useGoogleReCaptcha();
   const inputRef = useRef(null);
 
@@ -71,7 +73,7 @@ export default function Index() {
         <title>Download discord user&apos;s profile</title>
       </Head>
       <div className="max-w-screen-md mx-auto p-4 lg:p-8 bg-white dark:bg-black text-black dark:text-white">
-        <div className={`my-2 p-2 outline-dashed outline-red-600 flex justify-center items-center ${failedRequests ? 'block' : 'hidden'} dark:text-white text-black font-medium italic bg-red-800`}>
+        <div className={`my-2 p-2 outline-dashed outline-red-600 flex justify-start items-center ${failedRequests ? 'block' : 'hidden'} dark:text-white text-black font-medium italic bg-red-800`}>
           {failedRequests ? failedRequests.map((failed, index) => (
             <div key={`error-${index}`}>
               <span>Some requests failed with reason {failed.status.error}</span>
@@ -103,10 +105,18 @@ export default function Index() {
             </div>
           </>
         ))}
-        {!lookupResult ? <></> : (
+        {(!lookupResult || lookupResult?.length === failedRequests?.length) ? <></> : (
           <>
-            <hr className="my-8 border-none outline-dashed dark:outline-white outline-black" />
-            <button className="p-2 transition-colors dark:outline-white outline-black dark:hover:bg-white dark:hover:text-black dark:hover:border-black cursor-pointer outline-dashed font-bold" onClick={download}>Download</button>
+            <hr className="mt-8 border-none outline-dashed dark:outline-white outline-black" />
+            <div className="flex flex-col">
+              <div className="flex justify-around items-center my-8">
+                <span className="font-medium italics text-xl">Add names below?</span>
+                <div className="outline-dashed p-2 w-10 h-10 mr-4 cursor-pointer dark:hover:bg-zinc-600 hover:bg-zinc-400 transition-colors" onClick={() => { setNameChecked(!nameChecked) }}>
+                  {nameChecked ? <CheckIcon className="dark:fill-white dark:stroke-white fill-black stroke-black" /> : <></>}
+                </div>
+              </div>
+              <button className="p-2 transition-colors dark:outline-white outline-black dark:hover:bg-white dark:hover:text-black cursor-pointer outline-dashed font-bold" onClick={download}>Download</button>
+            </div>
           </>
         )}
       </div>
