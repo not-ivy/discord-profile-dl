@@ -38,6 +38,7 @@ export default function Index() {
     let tempfail: { status: Status, response: DiscordResponse }[] = [];
     lookupResult.forEach((result) => { if (!result.status.success) tempfail.push({ status: result.status, response: result.response }) })
     setFailedRequests(tempfail);
+    setFormError(true);
   }, [lookupResult])
 
   useEffect(() => {
