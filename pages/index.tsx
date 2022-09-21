@@ -33,13 +33,17 @@ export default function Index() {
   useEffect(() => {
     let tempfail: { id: bigint, reason: string }[] = [];
     if (!lookupResult) return;
-    lookupResult.filter((user) => !user.success).forEach((user) => tempfail.push({ id: user.id, reason: user.error }))
+    console.log(lookupResult)
     setFailedRequests(tempfail);
   }, [lookupResult])
 
   const inputCallback = () => {
     if (formError) { setFormError(false); return }
   }
+
+  useEffect(() => {
+    console.log(failedRequests);
+  }, [failedRequests])
 
   return (
     <>
@@ -56,14 +60,14 @@ export default function Index() {
         <textarea onInput={inputCallback} className={`my-2 p-2 font-medium outline-dashed w-full dark:bg-black text-black dark:text-white ${formError ? 'dark:outline-red-500 outline-red-500 text-red-500 dark:text-red-500' : ''} dark:outline-white outline-black transition-all`} ref={inputRef} placeholder="List of Discord IDs seperated by space" /> <br />
         <button className="my-2 p-2 transition-colors dark:outline-white outline-black dark:hover:bg-white dark:hover:text-black dark:hover:border-black cursor-pointer outline-dashed font-bold" onClick={sendRequest}>Submit</button>
         {!lookupResult ? <></> : lookupResult.map((user) => (
-          <div className="grid grid-cols-5 gap-x-4 p-4 grid-rows-3 w-full h-40 my-4 outline-dashed dark:outline-white outline-black" key={`user-${user.id}`}>
+          <div className={`${!user.success ? 'hidden' : 'grid'} grid-cols-5 gap-x-4 p-4 grid-rows-3 w-full h-40 my-4 outline-dashed dark:outline-white outline-black`} key={`user-${user.id}`}>
             <div className="col-span-1 row-span-3 relative">
               <Image className="rounded-full" alt={user.username} src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.webp?size=1024`} layout="fill" objectFit="contain" />
             </div>
             <div className="flex flex-col justify-center items-center col-span-4 row-span-3">
               {!user.banner ? <></> : (
                 <div className="relative w-full h-full">
-                  <Image src={`https://cdn.discordapp.com/banners/${user.id}/${user.banner}.webp?size=1024`} layout="fill" objectFit="contain" />
+                  <Image src={`https://cdn.discordapp.com/banners/${user.id}/${user.banner}.webp?size=1024`} alt={`${user.username}'s banner`} layout="fill" objectFit="contain" />
                 </div>
               )}
               <span>{user.username}#{user.discriminator}</span>
