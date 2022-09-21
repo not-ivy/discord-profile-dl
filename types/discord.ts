@@ -1,7 +1,17 @@
-export default interface DiscordUser {
+export interface DiscordUser {
+  status: Status,
+  response: DiscordResponse | undefined,  
+}
+
+export interface Status {
   success: boolean,
   error: string | undefined,
-  id: bigint,
+}
+
+export interface DiscordResponse {
+  message: string | undefined,
+  errors: any, // dont have to worry about the type since we give user the whole obj encoded in json
+  id: string,
   username: string,
   discriminator: string,
   avatar: string | undefined,
